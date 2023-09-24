@@ -58,7 +58,7 @@ function OrderList() {
           </TableHeader>
           <TableBody>
             {orders &&
-              orders.map((order) => (
+              orders.map((order: any) => (
                 <TableRow key={order.Id}>
                   <TableCell className="font-medium">
                     {order.OrderTotal}
