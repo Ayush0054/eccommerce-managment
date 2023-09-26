@@ -10,9 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import axios from "axios";
+import PerOrders from "./perOrders";
 
 function OrderList() {
   const [orders, setOrders] = useState([]);
+  // const [showModal, setShowModal] = useState(false);
   const config = {
     headers: {
       "Content-type": "application/json",
@@ -31,6 +33,12 @@ function OrderList() {
   useEffect(() => {
     getOrders();
   }, []);
+  // const openModal = () => {
+  //   setShowModal(true);
+  //   if (showModal) {
+  //     setShowModal(false);
+  //   }
+  // };
   return (
     <div className="text-center">
       <h2>Orders</h2>
@@ -46,13 +54,12 @@ function OrderList() {
           <TableHeader>
             <TableRow>
               <TableHead>Order Number</TableHead>
-              <TableHead className="w-[100px]">Order Total</TableHead>
+              <TableHead>Order Total</TableHead>
               <TableHead>Products</TableHead>
               <TableHead>Customer Name</TableHead>
               <TableHead>Customer Email</TableHead>
               <TableHead>Customer Phone</TableHead>
               <TableHead>Customer Address</TableHead>
-
               <TableHead>Created At</TableHead>
             </TableRow>
           </TableHeader>
@@ -84,9 +91,12 @@ function OrderList() {
                   <TableCell className="font-medium">
                     {order.CreatedAt}
                   </TableCell>
-
-                  <TableCell className="text-right">
-                    {/* {invoice.totalAmount} */}
+                  <TableCell>
+                    <PerOrders
+                      order={order}
+                      // showModal={showModal}
+                      // setShowModal={setShowModal}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
