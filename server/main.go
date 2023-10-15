@@ -16,6 +16,7 @@ var db *gorm.DB
 
 
 type Order struct {
+
     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:order_id"` 
     OrderTotal          float32   `gorm:"column:order_order_total"`
     OrderNumber         string    `gorm:"column:order_order_number"`
@@ -26,6 +27,7 @@ type Order struct {
     CustomerAddress     string       `gorm:"column:order_customer_address"`
     CreatedAt           time.Time    `gorm:"column:order_created_at"`
     Products            string     `gorm:"column:order_products"`
+    SellerId            uuid.UUID  `gorm:"foreignKey:seller_id;type:uuid;column:order_seller_id"` // "foreign key" to struct Seller
   
 }
 
@@ -44,8 +46,8 @@ type Shipment struct {
 	DestinationCity         string             `gorm:"column:shipment_destination_city"`
 	OriginCity              string             `gorm:"column:shipment_origin_city"`
 	ReturnShipmentId        uuid.UUID          `gorm:"foreignKey:shipment_id;type:uuid;column:shipment_return_shipment_id"` // "foreign key" to struct Shipment
-	Weight                  string             `gorm:"column:shipment_weight"`
 	TrackerId               string             `gorm:"column:shipment_tracker_id"`
+    
 
 }
 
@@ -78,7 +80,8 @@ func main() {
 	r.POST("/api/orders", createOrder)
 
     // r.PUT("/api/orders/:id", updateShipmentStatus)
-
+    // r.POST("/api/signup", sellerSignup)
+	// r.POST("/api/login", sellerLogin)
 
     r.Run(":8080")
 }
@@ -113,31 +116,31 @@ func createOrder(c *gin.Context) {
 }
 
 
-// func updateShipmentStatus(c *gin.Context) {
-//     // Get the order ID from the URL parameter
-//     orderID := c.Param("id")
+func updateShipmentStatus(c *gin.Context) {
+    // Get the order ID from the URL parameter
+    orderID := c.Param("id")
 
-//     // Parse the new shipment status from the request body
-//     var requestBody struct {
-//         ShipmentStatus string `json:"shipmentStatus"`
-//     }
+    // Parse the new shipment status from the request body
+    var requestBody struct {
+        ShipmentStatus string `json:"shipmentStatus"`
+    }
 
-//     if err := c.ShouldBindJSON(&requestBody); err != nil {
-//         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//         return
-//     }
+    if err := c.ShouldBindJSON(&requestBody); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
 
-//     // Find the order by ID
-//     var order Order
-//     if db.First(&order, orderID).RecordNotFound() {
-//         c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
-//         return
-//     }
+    // Find the order by ID
+    var order Order
+    if db.First(&order, orderID).RecordNotFound() {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+        return
+    }
 
-//     // Update the shipment status
-//     order.ShipmentStatus = requestBody.ShipmentStatus
-//     db.Save(&order)
+    // Update the shipment status
+    order.ShipmentStatus = requestBody.ShipmentStatus
+    db.Save(&order)
 
-//     c.JSON(http.StatusOK, order)
-// }
+    c.JSON(http.StatusOK, order)
+}
 
