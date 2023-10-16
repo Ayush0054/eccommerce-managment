@@ -69,19 +69,19 @@ func main() {
         panic("Failed to connect to the database")
     }
 
-    db.AutoMigrate( &Order{}, &Shipment{}, &Checkpoint{})
+    db.AutoMigrate( &Order{}, &Shipment{}, &Checkpoint{} , &Seller{} , &SellerLoginModel{} , &SellerAuthResponse{} ) 
     r := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"} // Add your frontend's URL here
 	config.AllowMethods = []string{"GET", "PUT", "POST", "DELETE"} // Add the allowed HTTP methods
 	r.Use(cors.New(config))
 
-    r.GET("/api/orders", listOrders)
-	r.POST("/api/orders", createOrder)
+    r.GET("/api/orders", authMiddleware() , listOrders)
+	r.POST("/api/orders",authMiddleware() , createOrder)
 
     // r.PUT("/api/orders/:id", updateShipmentStatus)
-    // r.POST("/api/signup", sellerSignup)
-	// r.POST("/api/login", sellerLogin)
+    r.POST("/api/signup", sellerSignup)
+	r.POST("/api/login", sellerLogin)
 
     r.Run(":8080")
 }
@@ -116,31 +116,31 @@ func createOrder(c *gin.Context) {
 }
 
 
-func updateShipmentStatus(c *gin.Context) {
-    // Get the order ID from the URL parameter
-    orderID := c.Param("id")
+// func updateShipmentStatus(c *gin.Context) {
+//     // Get the order ID from the URL parameter
+//     orderID := c.Param("id")
 
-    // Parse the new shipment status from the request body
-    var requestBody struct {
-        ShipmentStatus string `json:"shipmentStatus"`
-    }
+//     // Parse the new shipment status from the request body
+//     var requestBody struct {
+//         ShipmentStatus string `json:"shipmentStatus"`
+//     }
 
-    if err := c.ShouldBindJSON(&requestBody); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-        return
-    }
+//     if err := c.ShouldBindJSON(&requestBody); err != nil {
+//         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+//         return
+//     }
 
-    // Find the order by ID
-    var order Order
-    if db.First(&order, orderID).RecordNotFound() {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
-        return
-    }
+//     // Find the order by ID
+//     var order Order
+//     if db.First(&order, orderID).RecordNotFound() {
+//         c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+//         return
+//     }
 
-    // Update the shipment status
-    order.ShipmentStatus = requestBody.ShipmentStatus
-    db.Save(&order)
+//     // Update the shipment status
+//     order.ShipmentStatus = requestBody.ShipmentStatus
+//     db.Save(&order)
 
-    c.JSON(http.StatusOK, order)
-}
+//     c.JSON(http.StatusOK, order)
+// }
 

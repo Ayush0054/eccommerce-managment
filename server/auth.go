@@ -43,7 +43,7 @@ func sellerSignup(c *gin.Context) {
 		return
 	}
 
-	// Check if the email is already registered
+	// // Check if the email is already registered
 	var existingSeller Seller
 	if result := db.Where("seller_email = ?", signupRequest.Email).First(&existingSeller); result.Error == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "Email already exists"})
