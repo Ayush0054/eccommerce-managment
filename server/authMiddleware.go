@@ -7,9 +7,9 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var jwtSecret = []byte("ayush")
+// var jwtSecret = []byte("ayush")
 
-func AuthMiddleware() gin.HandlerFunc {
+func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 
