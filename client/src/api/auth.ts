@@ -1,4 +1,4 @@
-import { SignupParams, User } from "@/types/authTypes";
+import { LoginParams, SignupParams, User } from "@/types/authTypes";
 import axios from "axios";
 type LoginSignupResponse = {
   status: "success" | "fail";
@@ -7,9 +7,9 @@ type LoginSignupResponse = {
 };
 
 export const signup = async (signupData: SignupParams) => {
-  const { name, Email, password } = signupData;
+  const { name, email, password } = signupData;
 
-  if (!name || Email || !password) {
+  if (!name || email || !password) {
     alert("Please provide all the data");
     return;
   }
@@ -17,8 +17,27 @@ export const signup = async (signupData: SignupParams) => {
   const data = await axios.post<LoginSignupResponse>(
     "http://localhost:8080/api/signup",
     {
-      method: "POST",
       data: signupData,
+    }
+  );
+
+  if (data instanceof Error) {
+    throw new Error(data.message);
+  }
+
+  return data;
+};
+
+export const login = async ({ email, password }: LoginParams) => {
+  if (!email || !password) {
+    alert("Please provide all the data");
+    return;
+  }
+
+  const data = await axios.post<LoginSignupResponse>(
+    "http://localhost:8080/api/login",
+    {
+      data: { email, password },
     }
   );
 

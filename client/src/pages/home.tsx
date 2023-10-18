@@ -19,7 +19,7 @@ function Home() {
             suscipit. Voluptatibus, culpa!
           </h1>
         </div>
-        <img src={image3} alt="" className=" h-[600px] rounded-lg" />
+        <img src={image3} alt="" className=" h-[500px] rounded-full" />
       </div>
     </div>
   );

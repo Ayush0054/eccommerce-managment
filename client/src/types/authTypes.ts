@@ -1,6 +1,7 @@
 export type SignupParams = {
   name: string;
-  Email: string;
+  email: string;
+  phone: string;
   password: string;
 };
 export type User = {
@@ -9,4 +10,9 @@ export type User = {
 
   Email?: string;
   password?: string;
+};
+
+export type LoginParams = {
+  email: string;
+  password: string;
 };
