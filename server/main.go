@@ -20,17 +20,42 @@ type Order struct {
     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:order_id"` 
     OrderTotal          float32   `gorm:"column:order_order_total"`
     OrderNumber         string    `gorm:"column:order_order_number"`
-    CustomerFirstName   string    `gorm:"column:order_customer_first_name"`
-    CustomerLastName    string    `gorm:"column:order_customer_last_name"`
-    CustomerEmail       string    `gorm:"column:order_customer_email"`
-    CustomerPhone       string    `gorm:"column:order_customer_phone"`
-    CustomerAddress     string       `gorm:"column:order_customer_address"`
+    CustomerId         uuid.UUID `gorm:"foreignKey:customer_id;type:uuid;column:order_customer_id"` // "foreign key" to struct Customer
     CreatedAt           time.Time    `gorm:"column:order_created_at"`
-    Products            string     `gorm:"column:order_products"`
     SellerId            uuid.UUID  `gorm:"foreignKey:seller_id;type:uuid;column:order_seller_id"` // "foreign key" to struct Seller
-  
-}
+    ProductId          uuid.UUID  `gorm:"foreignKey:product_id;type:uuid;column:order_product_id"` // "foreign key" to struct Product
+    status              string    `gorm:"column:order_status"` 
+    Quantity            int       `gorm:"column:order_quantity"`
 
+}
+type Sales struct {
+    Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:sales_id"`
+    TotalSales          float32   `gorm:"column:sales_total_sales"`
+    TotalOrders         int       `gorm:"column:sales_total_orders"`
+    TotalRevenue        float32   `gorm:"column:sales_total_revenue"`
+    DailyRevenue        float32   `gorm:"column:sales_daily_revenue"`
+    CreatedAt           time.Time `gorm:"column:sales_created_at"`
+    SellerId            uuid.UUID `gorm:"foreignKey:seller_id;type:uuid;column:sales_seller_id"` // "foreign key" to struct Seller
+}
+type Product struct {
+    Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:product_id"`
+    Name                string    `gorm:"column:product_name"`
+    Description         string    `gorm:"column:product_description"`
+    Price               float32   `gorm:"column:product_price"`
+    Quantity            int       `gorm:"column:product_quantity"`
+    CreatedAt           time.Time `gorm:"column:product_created_at"`
+    Sales              int       `gorm:"column:product_sales"`
+}
+type Customer struct {
+    Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:customer_id"`
+    FirstName           string    `gorm:"column:customer_first_name"`
+    LastName            string    `gorm:"column:customer_last_name"`
+    Email               string    `gorm:"column:customer_email"`
+    Phone               string    `gorm:"column:customer_phone"`
+    Address             string    `gorm:"column:customer_address"`
+    CreatedAt           time.Time `gorm:"column:customer_created_at"`
+
+}
 type Shipment struct {
 	Id                      uuid.UUID          `gorm:"primaryKey;type:uuid;column:shipment_id"`
 	OrderId                 uuid.UUID          `gorm:"foreignKey:order_id;type:uuid;column:shipment_order_id"`       
@@ -93,29 +118,129 @@ func listOrders(c *gin.Context) {
     c.JSON(http.StatusOK, orders)
 }
 
+
+// func createOrder(c *gin.Context) {
+//     var newOrder Order
+//     if newOrder.Id == uuid.Nil {
+//         newOrder.Id = uuid.New()
+//     }
+//     if err := c.ShouldBindJSON(&newOrder); err != nil {
+//         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+//         return
+//     }
+//     result := db.Create(&newOrder)
+//     if result.Error != nil {
+//         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
+//         return
+//     }
+//     c.JSON(http.StatusCreated, newOrder)
+// }
 func createOrder(c *gin.Context) {
-    // Parse the request JSON body into an Order struct
-    var newOrder Order
-	if newOrder.Id == uuid.Nil {
-        newOrder.Id = uuid.New()
+
+    // Get input data 
+    var input struct {
+      customer  Customer
+      product  Product
+      order  Order 
     }
-    if err := c.ShouldBindJSON(&newOrder); err != nil {
+    if err := c.ShouldBindJSON(&input); err != nil {
+      c.JSON(400, gin.H{"error": err.Error()})
+      return
+    }
+  
+    // Get product to decrement quantity
+    var product Product 
+    if err := db.Where("id = ?", input.product).First(&product).Error; err != nil {
+      c.JSON(500, gin.H{"error": "Failed to find product"})  
+      return
+    }
+  
+    // Get seller info from context 
+    sellerID := c.MustGet("current_user_id") // logged in user
+  
+    // Create customer
+    if err := db.Create(&input.customer).Error; err != nil {
+      c.JSON(500, gin.H{"error": "Failed to create customer"})
+      return  
+    }
+  
+    // Create order
+    input.order.CustomerId = input.customer.Id
+    input.order.SellerId = sellerID.(uuid.UUID) 
+    input.order.ProductId = input.product.Id
+  input.order.OrderTotal = input.product.Price * float32(input.order.Quantity)
+  input.order.OrderNumber = uuid.New().String()
+  input.order.CreatedAt = time.Now()
+  input.order.status = "pending"
+  input.order.Quantity = input.order.Quantity
+    if err := db.Create(&input.order).Error; err != nil {
+      c.JSON(500, gin.H{"error": "Failed to create order"})
+      return
+    }
+  
+    // Update product quantity
+    product.Quantity -= input.order.Quantity
+    db.Save(&product)
+  
+    // Update seller revenue
+    db.Exec("UPDATE sellers SET daily_revenue = daily_revenue + ? WHERE id = ?", 
+      input.order.OrderTotal , sellerID)
+  
+    c.JSON(201, gin.H{"message": "Order created successfully!"})
+  }
+// func  listsales(c *gin.Context) {
+//     var sales []Order
+//     db.Find(&sales)
+//     c.JSON(http.StatusOK, sales)
+// }
+// func listinventory(c *gin.Context) {
+//     var inventory []Order
+//     db.Find(&inventory)
+//     c.JSON(http.StatusOK, inventory)
+// }
+func listcustomers(c *gin.Context) {
+    var customers []Customer
+    db.Find(&customers)
+    c.JSON(http.StatusOK, customers)
+}
+func listproducts(c *gin.Context) {
+    var products []Product
+    db.Find(&products)
+    c.JSON(http.StatusOK, products)
+}
+func addProducts( c *gin.Context) {
+    var newProduct Product
+    if newProduct.Id == uuid.Nil {
+        newProduct.Id = uuid.New()
+    }
+    if err := c.ShouldBindJSON(&newProduct); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
-
-    // Insert the new order into the database
-    result := db.Create(&newOrder)
+    result := db.Create(&newProduct)
     if result.Error != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create product"})
         return
     }
-
-    // Return the newly created order as a response
-    c.JSON(http.StatusCreated, newOrder)
+    c.JSON(http.StatusCreated, newProduct)
 }
-
-
+func increaseProductbyId ( c *gin.Context ){
+    var product Product
+    if db.First(&product, c.Param("id")) == nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+        return
+    }
+    var requestBody struct {
+        Quantity int `json:"quantity"`
+    }
+    if err := c.ShouldBindJSON(&requestBody); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    product.Quantity += requestBody.Quantity
+    db.Save(&product)
+    c.JSON(http.StatusOK, product)
+}
 // func updateShipmentStatus(c *gin.Context) {
 //     // Get the order ID from the URL parameter
 //     orderID := c.Param("id")

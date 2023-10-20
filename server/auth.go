@@ -19,6 +19,7 @@ type Seller struct {
     Address             string    `gorm:"column:seller_address"`
     TotalOrders         int       `gorm:"column:seller_total_orders"`
     TotalRevenue        float32   `gorm:"column:seller_total_revenue"`
+	DailyRevenue        float32   `gorm:"column:seller_daily_revenue"`
     TotalProducts       int       `gorm:"column:seller_total_products"`
     TotalCustomers      int       `gorm:"column:seller_total_customers"`
     TotalShippedOrders  int       `gorm:"column:seller_total_shipped_orders"`
