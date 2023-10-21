@@ -13,8 +13,8 @@ function HomeNavbar() {
     navigate("/signup");
   };
   return (
-    <div className="bg-[#c4ece4] p-14">
-      <div className=" flex items-center justify-between   p-2 gap-5 bg-green-100 border border-gray-200 rounded-md">
+    <div className="bg-[aliceblue] p-14">
+      <div className=" flex items-center justify-between   p-2 gap-5 bg-white border border-gray-300 rounded-md">
         <h1 className=" font-bold text-2xl text-emerald-950">MangEcco</h1>
         <div className=" flex gap-10 ml-10 ">
           <Popover>

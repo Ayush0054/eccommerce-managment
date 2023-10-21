@@ -1,7 +1,11 @@
 import React from "react";
 
 function AddOrder() {
-  return <div></div>;
+  return (
+    <div>
+      <form action=""></form>
+    </div>
+  );
 }
 
 export default AddOrder;

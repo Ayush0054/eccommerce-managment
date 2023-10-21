@@ -3,14 +3,31 @@ import React from "react";
 
 function Sidebar() {
   return (
-    <Card className=" bg-[#c7ffe3] grid gap-10">
-      <button>Add orders</button>
-      <button>view orders</button>
-      <button>view products</button>
-      <button>view customers</button>
-      <button>view sales</button>
-      <button>view inventory</button>
-    </Card>
+    <div className=" bg-[aliceblue] grid gap-10 w-[200px] h-[100vh] pt-20 border border-l-2 ">
+      <div className=" flex flex-col gap-24">
+        <button className=" text-gray-500 hover:text-gray-400 ">
+          Dashboard
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400 ">
+          Add orders
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400">
+          view orders
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400">
+          view products
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400">
+          view customers
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400">
+          view sales
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400">
+          view inventory
+        </button>
+      </div>
+    </div>
   );
 }
 
