@@ -38,7 +38,7 @@ function Signup() {
   };
   return (
     <div className=" flex items-center  m-10 mt-36 justify-center ">
-      <Card className="flex items-center gap-5 p-10 bg-emerald-200">
+      <div className="flex items-center gap-24 p-10 ">
         <form
           action=""
           className=" grid gap-10 w-[400px] "
@@ -89,7 +89,7 @@ function Signup() {
           </h1>
         </form>
         <img src={image2} className=" h-[600px] rounded-lg" />
-      </Card>
+      </div>
     </div>
   );
 }

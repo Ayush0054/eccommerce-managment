@@ -4,11 +4,11 @@ import image3 from "../assets/photo/home_image.jpeg";
 
 function Home() {
   return (
-    <div className=" bg-[#c4ece4] h-[100vh] ">
+    <div className=" bg-[aliceblue] h-[100vh] ">
       <HomeNavbar />
       <div className=" flex  m-14 p-5">
         <div className=" grid ">
-          <h1 className=" text-emerald-600"> ---------- Smart Management</h1>
+          <h1 className=" text-blue-300"> ---------- Smart Management</h1>
           <h1 className=" font-bold text-7xl">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore
           </h1>
