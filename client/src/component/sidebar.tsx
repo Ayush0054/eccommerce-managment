@@ -1,30 +1,50 @@
 import { Card } from "@/components/ui/card";
 import React from "react";
-
+import { RxDashboard } from "react-icons/rx";
+import {
+  BsCart,
+  BsFillBagFill,
+  BsFillCartCheckFill,
+  BsPersonCircle,
+} from "react-icons/bs";
+import { IoPeopleSharp } from "react-icons/io5";
+import { GrDocumentPerformance } from "react-icons/gr";
+import { MdOutlineInventory2 } from "react-icons/md";
 function Sidebar() {
   return (
     <div className=" bg-[#ffffff] grid gap-10 w-[200px] h-[100vh] pt-20 border border-l-2 ">
-      <div className=" flex flex-col gap-24">
-        <button className=" text-gray-500 hover:text-gray-400 ">
+      <div className=" flex flex-col gap-16">
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center mx-5  ">
+          <RxDashboard />
           Dashboard
         </button>
-        <button className=" text-gray-500 hover:text-gray-400 ">
+        <button className=" text-gray-500 hover:text-gray-400  flex justify-between items-center  mx-5">
+          <BsFillCartCheckFill />
           Add orders
         </button>
-        <button className=" text-gray-500 hover:text-gray-400">
-          view orders
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center  mx-5 ">
+          <BsCart />
+          orders
         </button>
-        <button className=" text-gray-500 hover:text-gray-400">
-          view products
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center  mx-5 ">
+          <BsFillBagFill />
+          products
         </button>
-        <button className=" text-gray-500 hover:text-gray-400">
-          view customers
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center  mx-5">
+          <IoPeopleSharp />
+          customers
         </button>
-        <button className=" text-gray-500 hover:text-gray-400">
-          view sales
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center  mx-5">
+          <GrDocumentPerformance />
+          sales
         </button>
-        <button className=" text-gray-500 hover:text-gray-400">
-          view inventory
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center  mx-5">
+          <MdOutlineInventory2 />
+          inventory
+        </button>
+        <button className=" text-gray-500 hover:text-gray-400 flex justify-between items-center  mx-5">
+          <BsPersonCircle />
+          Profile
         </button>
       </div>
     </div>
