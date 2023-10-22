@@ -1,8 +1,8 @@
 import "./App.css";
-import React, { useState } from "react";
-import Notification from "./component/notification";
-import OrderList from "./component/orders";
-import ShipmentStatus from "./component/shipment";
+// import React, { useState } from "react";
+// import Notification from "./component/notification";
+// import OrderList from "./component/orders";
+// import ShipmentStatus from "./component/shipment";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/login";
 import Signup from "./pages/signup";
@@ -11,16 +11,15 @@ import Dashboard from "./pages/dashboard";
 
 function App() {
   // Define a state for notifications
-  const [notification, setNotification] = useState("");
+  // const [notification, setNotification] = useState("");
 
   return (
-    <div className="App">
+    <div className="App bg-gradient-to-r from-white to-blue-200 h-[100vh]">
       {/* <h1>E-commerce Order Management</h1> */}
       {/* <Notification message={notification} /> */}
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/orders" element={<OrderList />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/" element={<Home />} />
       </Routes>

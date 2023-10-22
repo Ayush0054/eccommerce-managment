@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -89,6 +90,7 @@ func sellerLogin(c *gin.Context) {
 
 	// Retrieve the seller with the provided email
 	var seller Seller
+	fmt.Println(loginRequest.Email,"hey")
 	result := db.Where("seller_email = ?", loginRequest.Email).First(&seller)
 	if result.Error != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
@@ -105,7 +107,8 @@ func sellerLogin(c *gin.Context) {
 	// Generate a JWT token for the seller
 	token := generateToken(seller.Id)
 	response := SellerAuthResponse{Token: token}
-
+    fmt.Println(response)
+	fmt.Println(token)
 	c.JSON(http.StatusOK, response)
 }
 

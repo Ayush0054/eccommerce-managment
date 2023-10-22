@@ -20,7 +20,7 @@ export const signup = async (signupData: SignupParams) => {
       data: signupData,
     }
   );
-
+  localStorage.setItem("user", JSON.stringify(data));
   if (data instanceof Error) {
     throw new Error(data.message);
   }
@@ -37,10 +37,11 @@ export const login = async ({ email, password }: LoginParams) => {
   const data = await axios.post<LoginSignupResponse>(
     "http://localhost:8080/api/login",
     {
-      data: { email, password },
+      Email: email,
+      password: password,
     }
   );
-
+  localStorage.setItem("user", JSON.stringify(data));
   if (data instanceof Error) {
     throw new Error(data.message);
   }

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
-import image2 from "../assets/photo/signup-image.jpeg";
+import image2 from "../assets/photo/login-image.jpeg";
 
 import { signup } from "@/api/auth";
 import { SignupParams } from "@/types/authTypes";
@@ -26,7 +26,7 @@ function Signup() {
       alert("Something went wrong. Can't signup.");
       return;
     }
-
+    navigate("/dashboard");
     if (!data) return;
 
     // dispatch(userSignupAction({ token: data.token, user: data.user }));
@@ -38,10 +38,10 @@ function Signup() {
   };
   return (
     <div className=" flex items-center  m-10 mt-36 justify-center ">
-      <div className="flex items-center gap-24 p-10 ">
+      <Card className="flex items-center  drop-shadow-2xl  ">
         <form
           action=""
-          className=" grid gap-10 w-[400px] "
+          className=" grid gap-10 w-[400px] m-10 "
           onSubmit={handleSubmit}
         >
           <h1 className="text-4xl font-bold text-center">Signup</h1>
@@ -61,14 +61,14 @@ function Signup() {
               handleInputChange("name", e.target.value)
             }
           />
-          <Input
+          {/* <Input
             type="text"
             placeholder="Phone"
             value={signupData.phone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleInputChange("phone", e.target.value)
             }
-          />
+          /> */}
           <Input
             type="password"
             placeholder="Password"
@@ -88,8 +88,8 @@ function Signup() {
             </button>
           </h1>
         </form>
-        <img src={image2} className=" h-[600px] rounded-lg" />
-      </div>
+        <img src={image2} className=" h-[600px] " />
+      </Card>
     </div>
   );
 }
