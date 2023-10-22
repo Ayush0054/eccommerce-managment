@@ -3,7 +3,7 @@ import React from "react";
 
 function Sidebar() {
   return (
-    <div className=" bg-[aliceblue] grid gap-10 w-[200px] h-[100vh] pt-20 border border-l-2 ">
+    <div className=" bg-[#ffffff] grid gap-10 w-[200px] h-[100vh] pt-20 border border-l-2 ">
       <div className=" flex flex-col gap-24">
         <button className=" text-gray-500 hover:text-gray-400 ">
           Dashboard
