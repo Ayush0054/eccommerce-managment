@@ -8,6 +8,7 @@ import Login from "./pages/login";
 import Signup from "./pages/signup";
 import Home from "./pages/home";
 import Dashboard from "./pages/dashboard";
+import OrderList from "./component/orders";
 
 function App() {
   // Define a state for notifications
@@ -21,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/" element={<Home />} />
       </Routes>
       <div className="container">
