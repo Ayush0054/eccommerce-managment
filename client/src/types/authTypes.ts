@@ -3,6 +3,7 @@ export type SignupParams = {
   email: string;
   phone: string;
   password: string;
+  address: string;
 };
 export type User = {
   _id: string;

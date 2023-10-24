@@ -7,9 +7,9 @@ type LoginSignupResponse = {
 };
 
 export const signup = async (signupData: SignupParams) => {
-  const { name, email, password } = signupData;
+  const { name, email, password, phone, address } = signupData;
 
-  if (!name || email || !password) {
+  if (!name || !email || !password || !address || !phone) {
     alert("Please provide all the data");
     return;
   }
@@ -17,10 +17,14 @@ export const signup = async (signupData: SignupParams) => {
   const data = await axios.post<LoginSignupResponse>(
     "http://localhost:8080/api/signup",
     {
-      data: signupData,
+      Email: email,
+      Password: password,
+      Name: name,
+      Phone: phone,
+      Address: address,
     }
   );
-  localStorage.setItem("user", JSON.stringify(data));
+
   if (data instanceof Error) {
     throw new Error(data.message);
   }
