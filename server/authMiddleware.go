@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,6 +46,7 @@ func authMiddleware() gin.HandlerFunc {
 	}
 
 		// You can access the user ID from the claims here
+		fmt.Println(claims)
 	 userID := claims["seller_id"].(string)
 
 		// You can store the user data in the request context if needed

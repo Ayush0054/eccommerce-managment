@@ -25,7 +25,6 @@ type Seller struct {
     TotalCustomers      int       `gorm:"column:seller_total_customers"`
     TotalShippedOrders  int       `gorm:"column:seller_total_shipped_orders"`
     TotalReturnedOrders int       `gorm:"column:seller_total_returned_orders"`
-    CreatedAt           time.Time `gorm:"column:seller_created_at"`
 }
 
 // SellerLoginRequest struct for seller login request
@@ -66,19 +65,29 @@ func sellerSignup(c *gin.Context) {
 		Email: signupRequest.Email,
 		// Store the hashed password in the database
 		Password: string(hashedPassword),
+		Phone:    signupRequest.Phone,
+		Address:   signupRequest.Address,
+		TotalOrders: 0,
+		TotalRevenue: 0,
+		DailyRevenue: 0,
+		TotalProducts: 0,
+		TotalCustomers: 0,
+		TotalShippedOrders: 0,
+		TotalReturnedOrders: 0,	
 	}
 
 	result := db.Create(&newSeller)
 	if result.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create seller"})
+		fmt.Println(result.Error)
 		return
 	}
 
 	// Generate a JWT token for the seller
-	token := generateToken(newSeller.Id)
-	response := SellerAuthResponse{Token: token}
+	// token := generateToken(newSeller.Id)
+	// response := SellerAuthResponse{Token: token}
 
-	c.JSON(http.StatusCreated, response)
+	c.IndentedJSON(http.StatusCreated, result)
 }
 
 func sellerLogin(c *gin.Context) {
@@ -111,7 +120,6 @@ func sellerLogin(c *gin.Context) {
 	fmt.Println(token)
 	c.JSON(http.StatusOK, response)
 }
-
 func generateToken(sellerID uuid.UUID) string {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)

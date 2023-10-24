@@ -94,7 +94,7 @@ func main() {
         panic("Failed to connect to the database")
     }
 
-    db.AutoMigrate( &Order{}, &Shipment{}, &Checkpoint{} , &Seller{} , &SellerLoginModel{} , &SellerAuthResponse{} ) 
+    db.AutoMigrate(  &Seller{}  ) 
     r := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173"} // Add your frontend's URL here
@@ -107,7 +107,7 @@ func main() {
     // r.PUT("/api/orders/:id", updateShipmentStatus)
     r.POST("/api/signup", sellerSignup)
 	r.POST("/api/login", sellerLogin)
-
+    r.GET("/api/sellerDetail", authMiddleware(), SellerDetails)
     r.Run(":8080")
 }
 
@@ -166,7 +166,7 @@ func createOrder(c *gin.Context) {
   
     // Create order
     input.order.CustomerId = input.customer.Id
-    input.order.SellerId = sellerID.(uuid.UUID) 
+    input.order.SellerId  = c.MustGet("user").(uuid.UUID)
     input.order.ProductId = input.product.Id
   input.order.OrderTotal = input.product.Price * float32(input.order.Quantity)
   input.order.OrderNumber = uuid.New().String()
