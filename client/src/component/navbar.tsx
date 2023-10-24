@@ -19,7 +19,9 @@ function Navbar() {
         <AvatarImage src="https://github.com/shadcn.png" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
-      <Button onClick={handleLogout}>Logout</Button>
+      <Button onClick={handleLogout} className=" bg-orange-400">
+        Logout
+      </Button>
     </div>
   );
 }

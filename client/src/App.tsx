@@ -15,7 +15,7 @@ function App() {
   // const [notification, setNotification] = useState("");
 
   return (
-    <div className="App bg-gradient-to-r from-white to-blue-200 h-[100vh]">
+    <div>
       {/* <h1>E-commerce Order Management</h1> */}
       {/* <Notification message={notification} /> */}
       <Routes>

@@ -8,14 +8,17 @@ import image2 from "../assets/photo/login-image.jpeg";
 import { signup } from "@/api/auth";
 import { SignupParams } from "@/types/authTypes";
 import { useNavigate } from "react-router";
+import { useToast } from "@/components/ui/use-toast";
 function Signup() {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [signupData, setSignupData] = useState<SignupParams>({
     name: "",
 
     email: "",
     phone: "",
     password: "",
+    address: "",
   });
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,7 +29,11 @@ function Signup() {
       alert("Something went wrong. Can't signup.");
       return;
     }
-    navigate("/dashboard");
+    toast({
+      title: "successfully created account",
+      description: "redirecting to login page",
+    });
+    navigate("/login");
     if (!data) return;
 
     // dispatch(userSignupAction({ token: data.token, user: data.user }));
@@ -61,14 +68,22 @@ function Signup() {
               handleInputChange("name", e.target.value)
             }
           />
-          {/* <Input
+          <Input
             type="text"
             placeholder="Phone"
             value={signupData.phone}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               handleInputChange("phone", e.target.value)
             }
-          /> */}
+          />
+          <Input
+            type="text"
+            placeholder="Address"
+            value={signupData.address}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              handleInputChange("address", e.target.value)
+            }
+          />
           <Input
             type="password"
             placeholder="Password"
