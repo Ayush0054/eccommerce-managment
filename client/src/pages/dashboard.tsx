@@ -1,20 +1,19 @@
+import { sellerDetails } from "@/api/seller";
 import Navbar from "@/component/navbar";
-import OrderList from "@/component/orders";
+
 import Sidebar from "@/component/sidebar";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ChatState } from "@/context/userProvider";
 
 function Dashboard() {
-  const chat = ChatState();
-  console.log(chat);
-
+  sellerDetails();
   return (
     <div>
       <div className=" flex justify-between">
         <Sidebar />
         <div className=" w-[100vw] ">
-          <Navbar /> <OrderList />
+          <Navbar />
+          {/* <OrderList /> */}
           <Card className=" w-[300px] bg-[#ffffff] m-5 p-5">
             <h1 className=" text-xl font-bold text-center">Storage left</h1>
             <div className=" flex items-center justify-center">

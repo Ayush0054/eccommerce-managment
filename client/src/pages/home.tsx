@@ -1,5 +1,5 @@
 import HomeNavbar from "@/component/homeNavbar";
-import React from "react";
+
 import image3 from "../assets/photo/home_image.jpeg";
 
 function Home() {

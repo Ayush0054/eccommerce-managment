@@ -29,7 +29,7 @@ type ChildProps = {
 
 const ChatContext = createContext(defaultState);
 // const  Provider  = ChatContext;
-const searchContext = createContext(defaultState);
+// const searchContext = createContext(defaultState);
 const ChatProvider = ({ children }: ChildProps) => {
   const [user, setUser] = useState<string>(defaultState.user);
   const [search, setSearch] = useState<boolean>(defaultState.search);

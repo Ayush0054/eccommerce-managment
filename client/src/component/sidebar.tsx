@@ -1,4 +1,3 @@
-import React from "react";
 import { RxDashboard } from "react-icons/rx";
 import {
   BsCart,
