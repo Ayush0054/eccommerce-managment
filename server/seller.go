@@ -5,9 +5,9 @@ import (
 )
 
 func SellerDetails(c *gin.Context){
-	sellerID := c.Param("seller_id")
+	sellerID := c.MustGet("user")
 	var seller Seller
-	if err := db.Where("id = ?", sellerID).First(&seller).Error; err != nil {
+	if err := db.Where("seller_id = ?", sellerID).Omit("Password").First(&seller).Error; err != nil {
 		// Handle error
 		c.JSON(500, gin.H{"error": "Failed to fetch seller"}) 
 		return

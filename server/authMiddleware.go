@@ -12,8 +12,9 @@ import (
 
 func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		
 		tokenString := c.GetHeader("Authorization")
-
+       fmt.Println(tokenString,"tokenstring")
 		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Not authorized, no token"})
 			c.Abort()
@@ -55,3 +56,4 @@ func authMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+

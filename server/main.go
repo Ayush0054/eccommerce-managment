@@ -94,20 +94,20 @@ func main() {
         panic("Failed to connect to the database")
     }
 
-    db.AutoMigrate(  &Seller{}  ) 
+    db.AutoMigrate(  &Seller{} ,&Order{}, &Product{}, &Customer{}, &Shipment{}, &Checkpoint{} , &Sales{} ) 
     r := gin.Default()
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"http://localhost:5173"} // Add your frontend's URL here
-	config.AllowMethods = []string{"GET", "PUT", "POST", "DELETE"} // Add the allowed HTTP methods
-	r.Use(cors.New(config))
-
+	config.AllowOrigins = []string{"http://localhost:5173","http://localhost:8080"} // Add your frontend's URL here
+	config.AllowMethods = []string{"GET", "PUT", "POST", "DELETE","HEAD"} // Add the allowed HTTP methods
+    config.AllowHeaders =  []string{"Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With"}
+    r.Use(cors.New(config))
     r.GET("/api/orders", authMiddleware() , listOrders)
 	r.POST("/api/orders",authMiddleware() , createOrder)
-
+    r.POST("/api/products",authMiddleware() , addProducts)
     // r.PUT("/api/orders/:id", updateShipmentStatus)
     r.POST("/api/signup", sellerSignup)
 	r.POST("/api/login", sellerLogin)
-    r.GET("/api/sellerDetail", authMiddleware(), SellerDetails)
+    r.GET("/api/sellerdetail", authMiddleware(), SellerDetails)
     r.Run(":8080")
 }
 
@@ -150,13 +150,13 @@ func createOrder(c *gin.Context) {
   
     // Get product to decrement quantity
     var product Product 
-    if err := db.Where("id = ?", input.product).First(&product).Error; err != nil {
+    if err := db.Where("product_id = ?",input.product).First(&product).Error; err != nil {
       c.JSON(500, gin.H{"error": "Failed to find product"})  
       return
     }
   
     // Get seller info from context 
-    sellerID := c.MustGet("current_user_id") // logged in user
+    sellerID := c.MustGet("user") // logged in user
   
     // Create customer
     if err := db.Create(&input.customer).Error; err != nil {
@@ -168,6 +168,7 @@ func createOrder(c *gin.Context) {
     input.order.CustomerId = input.customer.Id
     input.order.SellerId  = c.MustGet("user").(uuid.UUID)
     input.order.ProductId = input.product.Id
+    
   input.order.OrderTotal = input.product.Price * float32(input.order.Quantity)
   input.order.OrderNumber = uuid.New().String()
   input.order.CreatedAt = time.Now()
@@ -185,7 +186,8 @@ func createOrder(c *gin.Context) {
     // Update seller revenue
     db.Exec("UPDATE sellers SET daily_revenue = daily_revenue + ? WHERE id = ?", 
       input.order.OrderTotal , sellerID)
-  
+   db.Exec("UPDATE sellers SET total_revenue = total_revenue + ? WHERE id = ?", input.order.OrderTotal , sellerID)
+   db.Exec("UPDATE products SET sales = sales + ? WHERE id = ?", input.order.Quantity , input.product.Id)
     c.JSON(201, gin.H{"message": "Order created successfully!"})
   }
 // func  listsales(c *gin.Context) {

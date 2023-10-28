@@ -115,7 +115,7 @@ func sellerLogin(c *gin.Context) {
 
 	// Generate a JWT token for the seller
 	token := generateToken(seller.Id)
-	response := SellerAuthResponse{Token: token}
+	response := SellerAuthResponse{Token: token }
     fmt.Println(response)
 	fmt.Println(token)
 	c.JSON(http.StatusOK, response)
