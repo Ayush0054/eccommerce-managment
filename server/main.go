@@ -24,13 +24,13 @@ type Order struct {
     CreatedAt           time.Time    `gorm:"column:order_created_at"`
     SellerId            uuid.UUID  `gorm:"foreignKey:seller_id;type:uuid;column:order_seller_id"` // "foreign key" to struct Seller
     ProductId          uuid.UUID  `gorm:"foreignKey:product_id;type:uuid;column:order_product_id"` // "foreign key" to struct Product
-    status              string    `gorm:"column:order_status"` 
+    Status              string    `gorm:"column:order_status"` 
     Quantity            int       `gorm:"column:order_quantity"`
 
 }
 type Sales struct {
     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:sales_id"`
-    TotalSales          float32   `gorm:"column:sales_total_sales"`
+    TotalSales          int   `gorm:"column:sales_total_sales"`
     TotalOrders         int       `gorm:"column:sales_total_orders"`
     TotalRevenue        float32   `gorm:"column:sales_total_revenue"`
     DailyRevenue        float32   `gorm:"column:sales_daily_revenue"`
@@ -54,7 +54,7 @@ type Customer struct {
     Phone               string    `gorm:"column:customer_phone"`
     Address             string    `gorm:"column:customer_address"`
     CreatedAt           time.Time `gorm:"column:customer_created_at"`
-
+    productIDs        []uuid.UUID `gorm:"column:customer_product_ids"`
 }
 type Shipment struct {
 	Id                      uuid.UUID          `gorm:"primaryKey;type:uuid;column:shipment_id"`
@@ -102,11 +102,12 @@ func main() {
     config.AllowHeaders =  []string{"Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With"}
     r.Use(cors.New(config))
     r.GET("/api/orders", authMiddleware() , listOrders)
-	r.POST("/api/orders",authMiddleware() , createOrder)
+	r.POST("/api/orders",authMiddleware() , addOrder)
     r.POST("/api/products",authMiddleware() , addProducts)
     // r.PUT("/api/orders/:id", updateShipmentStatus)
     r.POST("/api/signup", sellerSignup)
 	r.POST("/api/login", sellerLogin)
+    // r.POST("/api/product", getProductbyId)
     r.GET("/api/sellerdetail", authMiddleware(), SellerDetails)
     r.Run(":8080")
 }
@@ -119,77 +120,7 @@ func listOrders(c *gin.Context) {
 }
 
 
-// func createOrder(c *gin.Context) {
-//     var newOrder Order
-//     if newOrder.Id == uuid.Nil {
-//         newOrder.Id = uuid.New()
-//     }
-//     if err := c.ShouldBindJSON(&newOrder); err != nil {
-//         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-//         return
-//     }
-//     result := db.Create(&newOrder)
-//     if result.Error != nil {
-//         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create order"})
-//         return
-//     }
-//     c.JSON(http.StatusCreated, newOrder)
-// }
-func createOrder(c *gin.Context) {
 
-    // Get input data 
-    var input struct {
-      customer  Customer
-      product  Product
-      order  Order 
-    }
-    if err := c.ShouldBindJSON(&input); err != nil {
-      c.JSON(400, gin.H{"error": err.Error()})
-      return
-    }
-  
-    // Get product to decrement quantity
-    var product Product 
-    if err := db.Where("product_id = ?",input.product).First(&product).Error; err != nil {
-      c.JSON(500, gin.H{"error": "Failed to find product"})  
-      return
-    }
-  
-    // Get seller info from context 
-    sellerID := c.MustGet("user") // logged in user
-  
-    // Create customer
-    if err := db.Create(&input.customer).Error; err != nil {
-      c.JSON(500, gin.H{"error": "Failed to create customer"})
-      return  
-    }
-  
-    // Create order
-    input.order.CustomerId = input.customer.Id
-    input.order.SellerId  = c.MustGet("user").(uuid.UUID)
-    input.order.ProductId = input.product.Id
-    
-  input.order.OrderTotal = input.product.Price * float32(input.order.Quantity)
-  input.order.OrderNumber = uuid.New().String()
-  input.order.CreatedAt = time.Now()
-  input.order.status = "pending"
-  input.order.Quantity = input.order.Quantity
-    if err := db.Create(&input.order).Error; err != nil {
-      c.JSON(500, gin.H{"error": "Failed to create order"})
-      return
-    }
-  
-    // Update product quantity
-    product.Quantity -= input.order.Quantity
-    db.Save(&product)
-  
-    // Update seller revenue
-    db.Exec("UPDATE sellers SET daily_revenue = daily_revenue + ? WHERE id = ?", 
-      input.order.OrderTotal , sellerID)
-   db.Exec("UPDATE sellers SET total_revenue = total_revenue + ? WHERE id = ?", input.order.OrderTotal , sellerID)
-   db.Exec("UPDATE products SET sales = sales + ? WHERE id = ?", input.order.Quantity , input.product.Id)
-    c.JSON(201, gin.H{"message": "Order created successfully!"})
-  }
 // func  listsales(c *gin.Context) {
 //     var sales []Order
 //     db.Find(&sales)
@@ -200,6 +131,7 @@ func createOrder(c *gin.Context) {
 //     db.Find(&inventory)
 //     c.JSON(http.StatusOK, inventory)
 // }
+
 func listcustomers(c *gin.Context) {
     var customers []Customer
     db.Find(&customers)
@@ -217,6 +149,23 @@ func addProducts( c *gin.Context) {
     }
     if err := c.ShouldBindJSON(&newProduct); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    if newProduct.Quantity == 0 {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Quantity cannot be 0"})
+        return
+    }
+    if newProduct.Price == 0 {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Price cannot be 0"})
+        return
+    }
+    if newProduct.Name == "" {  
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Name cannot be empty"})
+        return
+    }
+    var existingProduct Product
+    if result := db.Where("product_name = ?", newProduct.Name).First(&existingProduct); result.Error == nil {
+        c.JSON(http.StatusConflict, gin.H{"error": "Product already exists"})
         return
     }
     result := db.Create(&newProduct)
