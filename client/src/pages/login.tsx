@@ -24,7 +24,7 @@ function Login() {
     const data = await login(loginData);
     //@ts-ignore
     if (data?.status === "fail") {
-      alert("Something went wrong. Can't signup.");
+      alert("Something went wrong. Can't login.");
       return;
     }
     navigate("/dashboard");
@@ -66,7 +66,7 @@ function Login() {
             </button>
           </h1>
         </form>
-        <img src={image1} className=" h-[600px] " />
+        <img src={image1} className=" h-[600px] rounded-r-lg " />
       </Card>
     </div>
   );

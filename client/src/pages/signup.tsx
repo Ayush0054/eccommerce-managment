@@ -45,7 +45,7 @@ function Signup() {
   };
   return (
     <div className=" flex items-center  m-10 mt-36 justify-center ">
-      <Card className="flex items-center  drop-shadow-2xl  ">
+      <Card className="flex items-center  drop-shadow-2xl   ">
         <form
           action=""
           className=" grid gap-10 w-[400px] m-10 "
@@ -103,7 +103,7 @@ function Signup() {
             </button>
           </h1>
         </form>
-        <img src={image2} className=" h-[600px] " />
+        <img src={image2} className=" h-[70vh] rounded-r-lg " />
       </Card>
     </div>
   );
