@@ -18,9 +18,9 @@ interface ChatContextinterface {
 
 const defaultState = {
   user: "",
-  setUser: (user: "") => {},
-  search: false,
-  setSearch: (search) => {},
+  setUser: (user: string) => {},
+  // search: false,
+  // setSearch: (search: boolean) => {},
 } as ChatContextinterface;
 
 type ChildProps = {
@@ -44,6 +44,8 @@ const ChatProvider = ({ children }: ChildProps) => {
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("user") as string);
+    console.log(userInfo);
+
     if (userInfo) {
       setUser(userInfo);
     }

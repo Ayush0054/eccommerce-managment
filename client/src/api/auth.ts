@@ -45,6 +45,8 @@ export const login = async ({ email, password }: LoginParams) => {
       password: password,
     }
   );
+  console.log(data);
+
   localStorage.setItem("user", JSON.stringify(data));
   if (data instanceof Error) {
     throw new Error(data.message);
