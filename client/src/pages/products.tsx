@@ -1,10 +1,13 @@
 import Layout from "@/component/layout";
+import ProductsComponent from "@/component/products";
 import React from "react";
 
 function Products() {
   return (
     <div>
-      <Layout />
+      <Layout>
+        <ProductsComponent />
+      </Layout>
     </div>
   );
 }

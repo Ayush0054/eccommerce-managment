@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { ChatState } from "@/context/userProvider";
-// import { SellerParams } from "@/types/sellerTypes";
 import axios from "axios";
-export const sellerDetails = async (user: any) => {
+export const ProductDetails = async (user: any) => {
   // const user = ChatState();
   try {
     const config = {
@@ -11,10 +9,7 @@ export const sellerDetails = async (user: any) => {
         Authorization: `Bearer ${user.data.token}`,
       },
     };
-    const data = await axios.get(
-      "http://localhost:8080/api/sellerdetail",
-      config
-    );
+    const data = await axios.get("http://localhost:8080/api/products", config);
 
     console.log(data);
     return data;

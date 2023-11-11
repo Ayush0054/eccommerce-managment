@@ -1,8 +1,8 @@
 export type SellerParams = {
-  name: string;
-  email: string;
-  phone: string;
-  address: string;
+  Name: string;
+  Email: string;
+  Phone: string;
+  Address: string;
   TotalOrders: number;
   TotalRevenue: number;
   DailyRevenue: number;
