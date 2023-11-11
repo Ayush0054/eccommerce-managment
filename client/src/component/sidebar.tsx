@@ -9,8 +9,14 @@ import { IoPeopleSharp } from "react-icons/io5";
 import { GrDocumentPerformance } from "react-icons/gr";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { useNavigate } from "react-router";
+import { ChatState } from "@/context/userProvider";
 function Sidebar() {
+  const { fetchAgain, setFetchAgain } = ChatState();
   const navigate = useNavigate();
+  const profile = () => {
+    setFetchAgain(!fetchAgain);
+    navigate("/profile");
+  };
   return (
     <div className=" bg-[#ffffff] grid gap-10 w-[200px] h-[100vh] pt-20 border border-l-2 ">
       <div className=" flex flex-col gap-16">
@@ -59,7 +65,7 @@ function Sidebar() {
         </button>
         <button
           className=" text-gray-500 hover:text-gray-400 flex gap-3 items-center  mx-5"
-          onClick={() => navigate("/profile")}
+          onClick={profile}
         >
           <BsPersonCircle />
           Profile
