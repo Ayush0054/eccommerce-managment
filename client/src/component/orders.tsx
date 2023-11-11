@@ -9,30 +9,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import axios from "axios";
 import PerOrders from "./perOrders";
+import { ChatState } from "@/context/userProvider";
+import { orderDetails } from "@/api/orders";
+import { Card } from "@/components/ui/card";
+import { Order } from "@/types/orderTypes";
 
 function OrderList() {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order>();
+  const [loading, setLoading] = useState(true);
   // const [showModal, setShowModal] = useState(false);
-  const config = {
-    headers: {
-      "Content-type": "application/json",
-    },
-  };
-  const getOrders = async () => {
-    try {
-      const data = await axios.get("http://localhost:8080/api/orders", config);
 
+  const { fetchAgain, user } = ChatState();
+  const getData = async () => {
+    try {
+      const data = await orderDetails(user);
+      setOrders(data?.data);
+      setLoading(false);
       console.log(data);
-      setOrders(data && data.data);
+      console.log(data?.data);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Error fetching seller data:", error);
+      setLoading(false);
     }
   };
   useEffect(() => {
-    getOrders();
-  }, []);
+    getData();
+  }, [fetchAgain]);
   // const openModal = () => {
   //   setShowModal(true);
   //   if (showModal) {
@@ -40,7 +43,7 @@ function OrderList() {
   //   }
   // };
   return (
-    <div className="text-center">
+    <Card className="text-center m-5">
       <h2>Orders</h2>
 
       {/* {orders.map((order) => (
@@ -53,14 +56,16 @@ function OrderList() {
           <TableCaption>A list of your recent invoices.</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead>Order Number</TableHead>
               <TableHead>Order Total</TableHead>
+              <TableHead>Order Number</TableHead>
+              <TableHead>Quantity</TableHead>
               <TableHead>Products</TableHead>
-              <TableHead>Customer Name</TableHead>
-              <TableHead>Customer Email</TableHead>
+              <TableHead>Customer Id</TableHead>
+              {/* <TableHead>Customer Email</TableHead>
               <TableHead>Customer Phone</TableHead>
-              <TableHead>Customer Address</TableHead>
+              <TableHead>Customer Address</TableHead> */}
               <TableHead>Created At</TableHead>
+              <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,12 +79,15 @@ function OrderList() {
                     {order.OrderNumber}
                   </TableCell>
                   <TableCell className="font-medium">
-                    {order.Products}
+                    {order.Quantity}
                   </TableCell>
                   <TableCell className="font-medium">
-                    {order.CustomerFirstName} {order.CustomerLastName}
+                    {order.ProductId}
                   </TableCell>
                   <TableCell className="font-medium">
+                    {order.CustomerId}
+                  </TableCell>
+                  {/* <TableCell className="font-medium">
                     {order.CustomerEmail}
                   </TableCell>
                   <TableCell className="font-medium">
@@ -87,10 +95,11 @@ function OrderList() {
                   </TableCell>
                   <TableCell className="font-medium">
                     {order.CustomerAddress}
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell className="font-medium">
                     {order.CreatedAt}
                   </TableCell>
+                  <TableCell className="font-medium">{order.Status}</TableCell>
                   <TableCell>
                     <PerOrders
                       order={order}
@@ -103,7 +112,7 @@ function OrderList() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }
 
