@@ -28,15 +28,15 @@ type Order struct {
     Quantity            int       `gorm:"column:order_quantity"`
 
 }
-type Sales struct {
-    Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:sales_id"`
-    TotalSales          int   `gorm:"column:sales_total_sales"`
-    TotalOrders         int       `gorm:"column:sales_total_orders"`
-    TotalRevenue        float32   `gorm:"column:sales_total_revenue"`
-    DailyRevenue        float32   `gorm:"column:sales_daily_revenue"`
-    CreatedAt           time.Time `gorm:"column:sales_created_at"`
-    SellerId            uuid.UUID `gorm:"foreignKey:seller_id;type:uuid;column:sales_seller_id"` // "foreign key" to struct Seller
-}
+// type Sales struct {
+//     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:sales_id"`
+//     TotalSales          int   `gorm:"column:sales_total_sales"`
+//     TotalOrders         int       `gorm:"column:sales_total_orders"`
+//     TotalRevenue        float32   `gorm:"column:sales_total_revenue"`
+//     DailyRevenue        float32   `gorm:"column:sales_daily_revenue"`
+//     CreatedAt           time.Time `gorm:"column:sales_created_at"`
+//     SellerId            uuid.UUID `gorm:"foreignKey:seller_id;type:uuid;column:sales_seller_id"` // "foreign key" to struct Seller
+// }
 type Product struct {
     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:product_id"`
     Name                string    `gorm:"column:product_name"`
@@ -45,6 +45,7 @@ type Product struct {
     Quantity            int       `gorm:"column:product_quantity"`
     CreatedAt           time.Time `gorm:"column:product_created_at"`
     Sales              int       `gorm:"column:product_sales"`
+    SellerId            uuid.UUID `gorm:"foreignKey:seller_id;type:uuid;column:product_seller_id"` // "foreign key" to struct Seller
 }
 type Customer struct {
     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:customer_id"`
@@ -54,8 +55,16 @@ type Customer struct {
     Phone               string    `gorm:"column:customer_phone"`
     Address             string    `gorm:"column:customer_address"`
     CreatedAt           time.Time `gorm:"column:customer_created_at"`
-    productIDs        []uuid.UUID `gorm:"column:customer_product_ids"`
+    TotalOrders         int       `gorm:"column:customer_total_orders"`
+    TotalSpent          float32   `gorm:"column:customer_total_spent"`
+    SellerId            uuid.UUID `gorm:"foreignKey:seller_id;type:uuid;column:customer_seller_id"` // "foreign key" to struct Seller
+    ProductId           uuid.UUID `gorm:"foreignKey:product_id;type:uuid;column:customer_product_id"` // "foreign key" to struct Product
 }
+// type customerProduct struct {
+//     CustomerId uuid.UUID `gorm:"foreignKey:customer_id;type:uuid;column:customer_product_customer_id"` // "foreign key" to struct Customer
+//     ProductId  uuid.UUID `gorm:"foreignKey:product_id;type:uuid;column:customer_product_product_id"`   // "foreign key" to struct Product
+       
+// }
 type Shipment struct {
 	Id                      uuid.UUID          `gorm:"primaryKey;type:uuid;column:shipment_id"`
 	OrderId                 uuid.UUID          `gorm:"foreignKey:order_id;type:uuid;column:shipment_order_id"`       
@@ -94,30 +103,27 @@ func main() {
         panic("Failed to connect to the database")
     }
 
-    db.AutoMigrate(  &Seller{} ,&Order{}, &Product{}, &Customer{}, &Shipment{}, &Checkpoint{} , &Sales{} ) 
+    db.AutoMigrate(  &Seller{} ,&Order{}, &Product{}, &Customer{}, &Shipment{}, &Checkpoint{} ) 
     r := gin.Default()
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"http://localhost:5173","http://localhost:8080"} // Add your frontend's URL here
 	config.AllowMethods = []string{"GET", "PUT", "POST", "DELETE","HEAD"} // Add the allowed HTTP methods
     config.AllowHeaders =  []string{"Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With"}
     r.Use(cors.New(config))
-    r.GET("/api/orders", authMiddleware() , listOrders)
+    // r.GET("/api/orders", authMiddleware() , listOrders)
 	r.POST("/api/orders",authMiddleware() , addOrder)
+    r.GET("/api/orders", authMiddleware() , fetchOrders )
     r.POST("/api/products",authMiddleware() , addProducts)
+    r.GET("/api/products", authMiddleware() , listproducts )
     // r.PUT("/api/orders/:id", updateShipmentStatus)
     r.POST("/api/signup", sellerSignup)
 	r.POST("/api/login", sellerLogin)
     // r.POST("/api/product", getProductbyId)
     r.GET("/api/sellerdetail", authMiddleware(), SellerDetails)
+    r.GET("/api/customers", authMiddleware(), fetchCustomers)
     r.Run(":8080")
 }
 
-func listOrders(c *gin.Context) {
-    var orders []Order
-    db.Find(&orders)
-
-    c.JSON(http.StatusOK, orders)
-}
 
 
 
@@ -139,7 +145,12 @@ func listcustomers(c *gin.Context) {
 }
 func listproducts(c *gin.Context) {
     var products []Product
-    db.Find(&products)
+    sellerID := c.MustGet("user").(string)
+  
+    if err := db.Where("product_seller_id = ?",sellerID ).Find(&products).Error; err != nil {
+        c.JSON(500, gin.H{"error": "Failed to fetch customers"})
+        return
+    }
     c.JSON(http.StatusOK, products)
 }
 func addProducts( c *gin.Context) {
@@ -191,6 +202,9 @@ func increaseProductbyId ( c *gin.Context ){
     product.Quantity += requestBody.Quantity
     db.Save(&product)
     c.JSON(http.StatusOK, product)
+}
+func lowProductbyId( c *gin.Context){
+    
 }
 // func updateShipmentStatus(c *gin.Context) {
 //     // Get the order ID from the URL parameter

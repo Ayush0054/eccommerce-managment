@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
-var jwtSecret = []byte("your_secret_key")
+var jwtSecret = []byte("ayush")
 type Seller struct {
     Id                  uuid.UUID `gorm:"primaryKey;type:uuid;column:seller_id"`
     Name                string    `gorm:"column:seller_name"`
@@ -36,6 +36,7 @@ type SellerLoginModel struct {
 
 type SellerAuthResponse struct {
 	Token string `json:"token"`
+	Seller Seller `json:"seller"`
 }
 func sellerSignup(c *gin.Context) {
 	var signupRequest Seller
@@ -112,10 +113,15 @@ func sellerLogin(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
-
+	var gseller Seller
+	if err := db.Where("seller_email = ?", loginRequest.Email).Omit("Password").First(&gseller).Error; err != nil {
+		// Handle error
+		c.JSON(500, gin.H{"error": "Failed to fetch seller"}) 
+		return
+	  }	
 	// Generate a JWT token for the seller
 	token := generateToken(seller.Id)
-	response := SellerAuthResponse{Token: token }
+	response := SellerAuthResponse{Token: token, Seller: gseller }
     fmt.Println(response)
 	fmt.Println(token)
 	c.JSON(http.StatusOK, response)
