@@ -11,6 +11,9 @@ function HomeNavbar() {
   const redirectSignup = () => {
     navigate("/signup");
   };
+  const redirectLogin = () => {
+    navigate("/Login");
+  };
   return (
     <div className="bg-[aliceblue] p-14">
       <div className=" flex items-center justify-between   p-2 gap-5 bg-white border border-gray-300 rounded-md">
@@ -25,8 +28,10 @@ function HomeNavbar() {
             <PopoverContent>Place content for the popover here.</PopoverContent>
           </Popover>
         </div>
-
-        <Button onClick={redirectSignup}>Sign Up</Button>
+        <div className=" gap-2 flex ">
+          <Button onClick={redirectSignup}>Sign Up</Button>
+          <Button onClick={redirectLogin}>Login</Button>
+        </div>
       </div>
     </div>
   );

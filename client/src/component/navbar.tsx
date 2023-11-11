@@ -10,7 +10,8 @@ function Navbar() {
   const user = ChatState();
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
+    // window.dispatchEvent(new Event("storage"));
     window.location.reload();
   };
   return (

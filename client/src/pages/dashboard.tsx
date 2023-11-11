@@ -10,7 +10,7 @@ function Dashboard() {
         <Card className=" w-[300px] bg-[#ffffff] m-5 p-5">
           <h1 className=" text-xl font-bold text-center">Storage left</h1>
           <div className=" flex items-center justify-center">
-            <Progress value={33} className=" bg-white m-2" />
+            <Progress value={35} className=" bg-white m-2" />
             <h1 className=" text-xl font-semibold text-center">40%</h1>
           </div>
         </Card>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Table,
   TableBody,
@@ -35,6 +36,7 @@ function ProductsComponent() {
   }, [fetchAgain]);
   return (
     <Card className="text-center m-5 w-1/2 ">
+      {loading && <div className="text-center">Loading...</div>}
       <div className="  my-16">
         <Table>
           <TableCaption>A list of your recent invoices.</TableCaption>

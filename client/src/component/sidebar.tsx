@@ -15,7 +15,7 @@ function Sidebar() {
   const navigate = useNavigate();
   const profile = () => {
     setFetchAgain(!fetchAgain);
-    navigate("/profile");
+    navigate("/dashboard/profile");
   };
   return (
     <div className=" bg-[#ffffff] grid gap-10 w-[200px] h-[100vh] pt-20 border border-l-2 ">
@@ -33,21 +33,21 @@ function Sidebar() {
         </button>
         <button
           className=" text-gray-500 hover:text-gray-400 flex gap-3 items-center  mx-5 "
-          onClick={() => navigate("/orders")}
+          onClick={() => navigate("/dashboard/orders")}
         >
           <BsCart />
           orders
         </button>
         <button
           className=" text-gray-500 hover:text-gray-400 flex gap-3 items-center  mx-5 "
-          onClick={() => navigate("/products")}
+          onClick={() => navigate("/dashboard/products")}
         >
           <BsFillBagFill />
           products
         </button>
         <button
           className=" text-gray-500 hover:text-gray-400 flex gap-3 items-center  mx-5"
-          onClick={() => navigate("/customer")}
+          onClick={() => navigate("/dashboard/customer")}
         >
           <IoPeopleSharp />
           customers
@@ -58,7 +58,7 @@ function Sidebar() {
         </button>
         <button
           className=" text-gray-500 hover:text-gray-400 flex gap-3 items-center  mx-5"
-          onClick={() => navigate("/inventory")}
+          onClick={() => navigate("/dashboard/inventory")}
         >
           <MdOutlineInventory2 />
           inventory

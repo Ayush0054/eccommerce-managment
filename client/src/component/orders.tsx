@@ -20,12 +20,13 @@ function OrderList() {
   const [loading, setLoading] = useState(true);
   // const [showModal, setShowModal] = useState(false);
 
-  const { fetchAgain, user } = ChatState();
+  const { fetchAgain, user, setFetchAgain } = ChatState();
   const getData = async () => {
     try {
       const data = await orderDetails(user);
       setOrders(data?.data);
       setLoading(false);
+      setFetchAgain(true);
       console.log(data);
       console.log(data?.data);
     } catch (error) {
@@ -44,13 +45,6 @@ function OrderList() {
   // };
   return (
     <Card className="text-center m-5">
-      <h2>Orders</h2>
-
-      {/* {orders.map((order) => (
-          <li key={order.id}>
-            {order.orderNumber} - {order.shipmentStatus}
-          </li>
-        ))} */}
       <div className="  my-16">
         <Table>
           <TableCaption>A list of your recent invoices.</TableCaption>
@@ -61,9 +55,6 @@ function OrderList() {
               <TableHead>Quantity</TableHead>
               <TableHead>Products</TableHead>
               <TableHead>Customer Id</TableHead>
-              {/* <TableHead>Customer Email</TableHead>
-              <TableHead>Customer Phone</TableHead>
-              <TableHead>Customer Address</TableHead> */}
               <TableHead>Created At</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
@@ -87,15 +78,6 @@ function OrderList() {
                   <TableCell className="font-medium">
                     {order.CustomerId}
                   </TableCell>
-                  {/* <TableCell className="font-medium">
-                    {order.CustomerEmail}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {order.CustomerPhone}
-                  </TableCell>
-                  <TableCell className="font-medium">
-                    {order.CustomerAddress}
-                  </TableCell> */}
                   <TableCell className="font-medium">
                     {order.CreatedAt}
                   </TableCell>

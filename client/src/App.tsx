@@ -23,11 +23,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/customer" element={<Customer />} />
+        <Route path="/dashboard/orders" element={<Orders />} />
+        <Route path="/dashboard/profile" element={<Profile />} />
+        <Route path="/dashboard/products" element={<Products />} />
+        <Route path="/dashboard/inventory" element={<Inventory />} />
+        <Route path="/dashboard/customer" element={<Customer />} />
         <Route path="/" element={<Home />} />
       </Routes>
       <div className="container">

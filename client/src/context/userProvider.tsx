@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { userInfo } from "os";
 import React, {
   ReactNode,
   createContext,
@@ -14,6 +15,8 @@ interface ChatContextinterface {
   setUser: React.Dispatch<React.SetStateAction<string>> | undefined;
   search: boolean;
   setSearch: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchAgain: boolean;
+  setFetchAgain: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const defaultState = {
@@ -33,22 +36,35 @@ const ChatContext = createContext(defaultState);
 const ChatProvider = ({ children }: ChildProps) => {
   const [user, setUser] = useState<string>(defaultState.user);
   const [search, setSearch] = useState<boolean>(defaultState.search);
-
+  const [fetchAgain, setFetchAgain] = useState<boolean>(false);
   const values = {
     user,
     setUser,
     search,
     setSearch,
+    fetchAgain,
+    setFetchAgain,
   };
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const handleBackButton = () => {
+  //     localStorage.removeItem("user");
+  //     navigate("/");
+  //     window.location.reload();
+  //   };
+
+  //   window.addEventListener("popstate", handleBackButton);
+
+  //   return () => {
+  //     window.removeEventListener("popstate", handleBackButton);
+  //   };
+  // }, [navigate]);
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("user") as string);
     console.log(userInfo);
-
-    if (userInfo) {
-      setUser(userInfo);
-    }
+    setUser(userInfo);
     if (!userInfo) {
       navigate("/");
     }
