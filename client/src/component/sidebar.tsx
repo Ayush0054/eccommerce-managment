@@ -27,7 +27,10 @@ function Sidebar() {
           <RxDashboard />
           Dashboard
         </button>
-        <button className=" text-gray-500 hover:text-gray-400  flex gap-3 items-center  mx-5">
+        <button
+          className=" text-gray-500 hover:text-gray-400  flex gap-3 items-center  mx-5"
+          onClick={() => navigate("/dashboard/addorder")}
+        >
           <BsFillCartCheckFill />
           Add orders
         </button>

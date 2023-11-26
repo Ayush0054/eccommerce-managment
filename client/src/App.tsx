@@ -10,6 +10,7 @@ import Profile from "./pages/profile";
 import Products from "./pages/products";
 import Inventory from "./pages/inventory";
 import Customer from "./pages/customer";
+import CreateOrder from "./pages/createOrder";
 
 function App() {
   // Define a state for notifications
@@ -28,6 +29,7 @@ function App() {
         <Route path="/dashboard/products" element={<Products />} />
         <Route path="/dashboard/inventory" element={<Inventory />} />
         <Route path="/dashboard/customer" element={<Customer />} />
+        <Route path="/dashboard/addorder" element={<CreateOrder />} />
         <Route path="/" element={<Home />} />
       </Routes>
       <div className="container">

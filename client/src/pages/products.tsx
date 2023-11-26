@@ -6,7 +6,9 @@ function Products() {
   return (
     <div>
       <Layout>
-        <ProductsComponent />
+        <div className="flex justify-center">
+          <ProductsComponent />
+        </div>
       </Layout>
     </div>
   );

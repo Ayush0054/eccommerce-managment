@@ -13,4 +13,4 @@ func SellerDetails(c *gin.Context){
 		return
 	  }	
 	c.JSON(200, gin.H{"seller": seller})
-}
+} 
